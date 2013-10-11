@@ -50,7 +50,7 @@ module SimplesIdeias
 
     def segments_per_locale(pattern,scope)
       ::I18n.available_locales.each_with_object({}) do |locale,segments|
-        result = scoped_translations("#{locale}.#{scope}")
+        result = scoped_translations(scope, locale)
         unless result.empty?
           segment_name = ::I18n.interpolate(pattern,{:locale => locale})
           segments[segment_name] = result
@@ -128,10 +128,11 @@ module SimplesIdeias
       end
     end
 
-    def scoped_translations(scopes) # :nodoc:
+    def scoped_translations(scopes, locale=nil) # :nodoc:
       result = {}
 
       [scopes].flatten.each do |scope|
+        scope = locale ? "#{locale}.#{scope}" : scope
         deep_merge! result, filter(translations, scope)
       end
 
